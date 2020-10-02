@@ -1,12 +1,32 @@
-const sign_in_btn=document.querySelector("#sign-in-btn");
-const sign_up_btn=document.querySelector("#sign-up-btn");
-const container=document.querySelector(".container");
+const express = require('express');
+const bodyparser = require('body-parser');
+const app = express();
+require('dotenv').config()
+require("./views/cloudinary")
+const urlencodedParser = bodyparser.urlencoded({ extended: false });
+const cloudinary = require("cloudinary");
+const upload = require('./views/multer');
+app.set('view engine', 'ejs');
+app.use('/assest', express.static('assest'));
+app.use('/images', express.static('images'));
+app.use('/apps', express.static('apps'));
+app.use('/apps/auth',express.static('auth'));
+app.use(bodyparser.json()).use(bodyparser.urlencoded({ extended: true }));
+app.get('/', function (req, res) {
 
-sign_up_btn.addEventListener('click',()=>{
-    container.classList.add("sign-up-mode");
-
+    res.render('index');
 });
-sign_in_btn.addEventListener('click',()=>{
-    container.classList.remove("sign-up-mode");
-
+app.post('/upload',upload.single('image'),  async(req,res)=>{
+    const result=  await cloudinary.v2.uploader.upload(req.file.path);
+    res.send(`<h1>SUCCESFULLY UPLOADED !!!!</h1>`);
 });
+app.get('/contact', function (req, res) {
+
+    res.render('contact', { qs: req.query });
+});
+app.post('/contact', urlencodedParser, function (req, res) {
+
+    res.render('contact', { data: req.body });
+});
+
+app.listen(80);
