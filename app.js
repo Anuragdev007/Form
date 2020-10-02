@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyparser = require('body-parser');
 const app = express();
+const http=require('http');
 require('dotenv').config()
 require("./views/cloudinary")
 const urlencodedParser = bodyparser.urlencoded({ extended: false });
@@ -29,4 +30,4 @@ app.post('/contact', urlencodedParser, function (req, res) {
     res.render('contact', { data: req.body });
 });
 
-app.listen();
+app.listen(80);
